@@ -1,0 +1,49 @@
+{
+  "tasks": [
+    {
+      "id": "feat-login-page",
+      "tmuxSession": "agent-pm-001",
+      "agent": "claude-code",
+      "model": "claude-opus-4.5",
+      "role": "PM",
+      "description": "讨论登录页需求，确定功能规格和技术方案",
+      "repo": "agent-swarm-demo",
+      "worktree": "feat/login-page",
+      "branch": "feat/login-page",
+      "startedAt": 1740571200000,
+      "status": "pending",
+      "notifyOnComplete": true,
+      "prompt": "作为产品经理，分析登录页需求，输出功能规格文档"
+    },
+    {
+      "id": "feat-login-page-dev",
+      "tmuxSession": "agent-dev-001",
+      "agent": "claude-code",
+      "model": "claude-opus-4.5",
+      "role": "Developer",
+      "description": "根据 PM 规格实现登录页代码",
+      "repo": "agent-swarm-demo",
+      "worktree": "feat/login-page",
+      "branch": "feat/login-page",
+      "startedAt": null,
+      "status": "waiting",
+      "notifyOnComplete": true,
+      "dependsOn": "feat-login-page"
+    },
+    {
+      "id": "feat-login-page-qa",
+      "tmuxSession": "agent-qa-001",
+      "agent": "claude-code",
+      "model": "claude-opus-4.5",
+      "role": "QA",
+      "description": "验证登录页功能，截图测试报告",
+      "repo": "agent-swarm-demo",
+      "worktree": "feat/login-page",
+      "branch": "feat/login-page",
+      "startedAt": null,
+      "status": "waiting",
+      "notifyOnComplete": true,
+      "dependsOn": "feat-login-page-dev"
+    }
+  ]
+}
