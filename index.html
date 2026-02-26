@@ -3,7 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agent Swarm Demo - 个人开发团队</title>
+    <title>Agent Swarm Demo - 个人开发团队 · AI 编排系统</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Agent Swarm Demo - 使用 OpenClaw 编排多个 AI Agent 的个人开发团队系统。94 commits/天，7 PRs in 30min，极致生产力。">
+    <meta name="keywords" content="AI Agent, OpenClaw, Claude Code, Codex, 自动化开发, AI 编排, Agent Swarm, 生产力工具">
+    <meta name="author" content="RandomHuang">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Agent Swarm Demo - 个人开发团队 · AI 编排系统">
+    <meta property="og:description" content="使用 OpenClaw 编排多个 AI Agent，94 commits/天，极致生产力。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://github.com/RandomHuang/agent-swarm-demo">
+    <meta property="og:image" content="https://via.placeholder.com/1200x630?text=Agent+Swarm+Demo">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Agent Swarm Demo - AI 编排系统">
+    <meta name="twitter:description" content="94 commits/天，7 PRs in 30min，使用 AI Agent 提升开发效率。">
+    <meta name="twitter:image" content="https://via.placeholder.com/1200x630?text=Agent+Swarm+Demo">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://github.com/RandomHuang/agent-swarm-demo">
+
     <style>
         * {
             margin: 0;
@@ -163,6 +185,52 @@
             color: rgba(255, 255, 255, 0.4);
         }
 
+        /* 焦点样式（无障碍） */
+        .form-group input:focus-visible {
+            outline: 2px solid #e94560;
+            outline-offset: 2px;
+        }
+
+        /* 错误状态 */
+        .input-error {
+            border-color: #f44336 !important;
+            box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.1) !important;
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* 错误提示 */
+        .error-message {
+            color: #f44336;
+            font-size: 12px;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            animation: fadeIn 0.3s ease;
+            min-height: 18px;
+        }
+
+        .error-message:empty {
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         /* 按钮 */
         .btn-login {
             width: 100%;
@@ -188,10 +256,38 @@
             transform: translateY(0);
         }
 
+        .btn-login:focus-visible {
+            outline: 2px solid #e94560;
+            outline-offset: 2px;
+        }
+
+        /* 加载状态 */
+        .btn-login:disabled,
+        .btn-login.loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: translateY(0);
+        }
+
+        .btn-login.loading::before {
+            content: "⏳ ";
+            display: inline-block;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
         /* 底部链接 */
         .footer-links {
             margin-top: 32px;
             text-align: center;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px;
         }
 
         .footer-links a {
@@ -199,11 +295,17 @@
             text-decoration: none;
             font-size: 14px;
             transition: color 0.3s ease;
-            margin: 0 12px;
+            white-space: nowrap;
         }
 
         .footer-links a:hover {
             color: #e94560;
+        }
+
+        .footer-links a:focus-visible {
+            outline: 2px solid #e94560;
+            outline-offset: 2px;
+            border-radius: 4px;
         }
 
         /* 特性展示 */
@@ -278,26 +380,48 @@
         </div>
 
         <!-- 登录表单 -->
-        <form id="loginForm">
+        <form id="loginForm" role="form" aria-label="登录表单">
             <div class="form-group">
-                <label for="username">用户名</label>
-                <input type="text" id="username" placeholder="输入用户名" required>
+                <label for="username" id="username-label">用户名</label>
+                <input
+                    type="text"
+                    id="username"
+                    placeholder="输入用户名（3-20个字符）"
+                    required
+                    aria-labelledby="username-label"
+                    aria-required="true"
+                    aria-invalid="false"
+                    aria-describedby="username-error"
+                >
+                <span class="error-message" id="username-error" role="alert"></span>
             </div>
 
             <div class="form-group">
-                <label for="password">密码</label>
-                <input type="password" id="password" placeholder="输入密码" required>
+                <label for="password" id="password-label">密码</label>
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="输入密码（8-32个字符）"
+                    required
+                    aria-labelledby="password-label"
+                    aria-required="true"
+                    aria-invalid="false"
+                    aria-describedby="password-error"
+                >
+                <span class="error-message" id="password-error" role="alert"></span>
             </div>
 
-            <button type="submit" class="btn-login">
-                登录系统
+            <button type="submit" class="btn-login" aria-live="polite">
+                <span id="btn-text">登录系统</span>
             </button>
         </form>
 
         <!-- 底部链接 -->
         <div class="footer-links">
-            <a href="#">忘记密码？</a>
-            <a href="#">注册账号</a>
+            <a href="#forgot-password">忘记密码？</a>
+            <a href="#register">注册账号</a>
+            <a href="https://github.com/RandomHuang/agent-swarm-demo#readme" target="_blank" rel="noopener noreferrer">📚 文档中心</a>
+            <a href="https://github.com/RandomHuang/agent-swarm-demo#-快速开始" target="_blank" rel="noopener noreferrer">🚀 快速开始</a>
         </div>
 
         <!-- 特性展示 -->
@@ -331,14 +455,141 @@
             particlesContainer.appendChild(particle);
         }
 
+        // 表单验证规则
+        const validators = {
+            username: {
+                pattern: /^[a-zA-Z0-9_]{3,20}$/,
+                message: '⚠️ 用户名需要3-20个字符，只能包含字母、数字和下划线'
+            },
+            password: {
+                pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,32}$/,
+                message: '⚠️ 密码需要8-32个字符，至少包含一个字母和一个数字'
+            }
+        };
+
+        // 验证单个字段
+        function validateField(fieldId) {
+            const input = document.getElementById(fieldId);
+            const errorElement = document.getElementById(`${fieldId}-error`);
+            const validator = validators[fieldId];
+            const value = input.value.trim();
+
+            // 清空之前的错误
+            errorElement.textContent = '';
+            input.classList.remove('input-error');
+            input.setAttribute('aria-invalid', 'false');
+
+            // 检查是否为空
+            if (!value) {
+                showError(input, errorElement, '⚠️ 此字段不能为空');
+                return false;
+            }
+
+            // 检查格式
+            if (!validator.pattern.test(value)) {
+                showError(input, errorElement, validator.message);
+                return false;
+            }
+
+            return true;
+        }
+
+        // 显示错误信息
+        function showError(input, errorElement, message) {
+            input.classList.add('input-error');
+            input.setAttribute('aria-invalid', 'true');
+            errorElement.textContent = message;
+            input.focus();
+        }
+
+        // 清除错误信息
+        function clearError(fieldId) {
+            const input = document.getElementById(fieldId);
+            const errorElement = document.getElementById(`${fieldId}-error`);
+            input.classList.remove('input-error');
+            input.setAttribute('aria-invalid', 'false');
+            errorElement.textContent = '';
+        }
+
+        // 添加实时验证（blur事件）
+        ['username', 'password'].forEach(fieldId => {
+            const input = document.getElementById(fieldId);
+
+            input.addEventListener('blur', () => {
+                if (input.value.trim()) {
+                    validateField(fieldId);
+                }
+            });
+
+            input.addEventListener('input', () => {
+                const errorElement = document.getElementById(`${fieldId}-error`);
+                if (errorElement.textContent) {
+                    clearError(fieldId);
+                }
+            });
+        });
+
+        // 设置加载状态
+        function setLoadingState(isLoading) {
+            const form = document.getElementById('loginForm');
+            const submitBtn = document.querySelector('.btn-login');
+            const btnText = document.getElementById('btn-text');
+            const inputs = form.querySelectorAll('input');
+
+            if (isLoading) {
+                submitBtn.classList.add('loading');
+                submitBtn.disabled = true;
+                btnText.textContent = '登录中...';
+                inputs.forEach(input => input.disabled = true);
+            } else {
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+                btnText.textContent = '登录系统';
+                inputs.forEach(input => input.disabled = false);
+            }
+        }
+
         // 表单提交
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const username = document.getElementById('username').value;
+
+            // 验证所有字段
+            const isUsernameValid = validateField('username');
+            const isPasswordValid = validateField('password');
+
+            if (!isUsernameValid || !isPasswordValid) {
+                return;
+            }
+
+            const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
-            
-            // 演示用，实际应该发送到后端
-            alert(`欢迎回来，${username}！\n\n这是演示登录页，连接到 OpenClaw 编排系统。`);
+
+            // 设置加载状态
+            setLoadingState(true);
+
+            // 模拟登录请求（2秒延迟）
+            setTimeout(() => {
+                setLoadingState(false);
+
+                // 演示用，实际应该发送到后端
+                alert(`🎉 欢迎回来，${username}！\n\n✅ 登录成功\n\n这是演示登录页，未来将连接到 OpenClaw 编排系统。`);
+
+                // 清空表单
+                document.getElementById('loginForm').reset();
+                ['username', 'password'].forEach(clearError);
+            }, 2000);
+        });
+
+        // 键盘导航增强
+        document.addEventListener('keydown', (e) => {
+            // Escape 键清空表单（可选功能）
+            if (e.key === 'Escape') {
+                const form = document.getElementById('loginForm');
+                if (document.activeElement.tagName === 'INPUT') {
+                    form.reset();
+                    ['username', 'password'].forEach(clearError);
+                }
+            }
         });
 
         // 添加鼠标移动视差效果
